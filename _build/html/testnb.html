@@ -219,6 +219,16 @@
    Bisection method
   </a>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#implementation-of-the-bisection-method">
+   Implementation of the Bisection method
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#newton-s-method-implementation">
+   Newton’s Method Implementation
+  </a>
+ </li>
 </ul>
 
             </nav>
@@ -242,7 +252,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.pyplot._IonContext at 0x1e4a0c69ba8&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.pyplot._IonContext at 0x145f53d4908&gt;
 </pre></div>
 </div>
 </div>
@@ -274,6 +284,206 @@
 <li><p>If <span class="math notranslate nohighlight">\(f(x_m)f(x_2) &lt; 0\)</span>, replace <span class="math notranslate nohighlight">\(x_1\)</span> by <span class="math notranslate nohighlight">\(x_m\)</span>, otherwise, replace <span class="math notranslate nohighlight">\(x_2\)</span> by <span class="math notranslate nohighlight">\(x_m\)</span>.</p></li>
 <li><p>If <span class="math notranslate nohighlight">\(|x_1 - x_2|&lt;\varepsilon\)</span>, where <span class="math notranslate nohighlight">\(\varepsilon\)</span> is a user-specified tolerance, return <span class="math notranslate nohighlight">\(\frac{1}{2}(x_1 + x_2)\)</span>, otherwise return to step 2.</p></li>
 </ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">exponential_function</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mf">0.5</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">exponential_function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.lines.Line2D at 0x145f54ad128&gt;
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="implementation-of-the-bisection-method">
+<h2>Implementation of the Bisection method<a class="headerlink" href="#implementation-of-the-bisection-method" title="Permalink to this headline">¶</a></h2>
+<p>We implement the bisection method as a function called <code class="docutils literal notranslate"><span class="pre">bisection</span></code> which takes as arguments:</p>
+<ol class="simple">
+<li><p>The function for which we want to find the root.</p></li>
+<li><p><span class="math notranslate nohighlight">\(x_1\)</span> and <span class="math notranslate nohighlight">\(x_2\)</span></p></li>
+<li><p>The tolerance <code class="docutils literal notranslate"><span class="pre">tol</span></code> to be used as a stopping criterion (by default 0.001).</p></li>
+<li><p>The maximum number of iterations <code class="docutils literal notranslate"><span class="pre">nmax</span></code>. Make <code class="docutils literal notranslate"><span class="pre">nmax</span></code> a keyword argument with a default value of, for example, 10.</p></li>
+</ol>
+<p>Our function returns the value of <span class="math notranslate nohighlight">\(x\)</span> where <span class="math notranslate nohighlight">\(f(x)\)</span> is (approximately) zero, or print a warning if the maximum number of iterations is reached before the tolerance is met.</p>
+<p>Steps 2-5 of the algorithm explained above are implemented as a loop to be run until the tolerance level is met, at most <code class="docutils literal notranslate"><span class="pre">nmax</span></code> times.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">bisection</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">nmax</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">f1</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span>
+    <span class="n">f2</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">x2</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">f1</span> <span class="o">*</span> <span class="n">f2</span><span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Error: zero not in interval x1-x2&#39;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nmax</span><span class="p">):</span>
+        <span class="c1">### START CODE HERE</span>
+        <span class="n">xm</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">x1</span><span class="o">+</span><span class="n">x2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">func</span><span class="p">(</span><span class="n">xm</span><span class="p">)</span><span class="o">*</span><span class="n">f2</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">x1</span> <span class="o">=</span> <span class="n">xm</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">x2</span><span class="o">=</span><span class="n">xm</span>
+        <span class="n">f1</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span>
+        <span class="n">f2</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">x2</span><span class="p">)</span>
+        
+        <span class="c1">### END CODE HERE</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">x1</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Maximum number of iterations reached&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x1</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x1</span> <span class="o">=</span> <span class="mi">0</span> 
+<span class="n">x2</span> <span class="o">=</span> <span class="mi">1</span> 
+<span class="n">function</span> <span class="o">=</span> <span class="n">exponential_function</span>
+<span class="n">xzero</span> <span class="o">=</span> <span class="n">bisection</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">nmax</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> 
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;The root of exponential_function between </span><span class="si">%.2f</span><span class="s2"> and </span><span class="si">%.2f</span><span class="s2"> is </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">xzero</span><span class="p">))</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;The value of the function at the &#39;root&#39; is </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">exponential_function</span><span class="p">(</span><span class="n">xzero</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The root of exponential_function between 0.00 and 1.00 is 0.693115
+The value of the function at the &#39;root&#39; is -0.000016
+</pre></div>
+</div>
+</div>
+</div>
+<p>and of <span class="math notranslate nohighlight">\(cos\)</span>  between 0 and 3.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x1</span> <span class="o">=</span> <span class="mi">0</span> 
+<span class="n">x2</span> <span class="o">=</span> <span class="mi">3</span> 
+<span class="n">function</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span>
+<span class="n">root</span> <span class="o">=</span> <span class="n">bisection</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span> <span class="n">nmax</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;The root of cos between </span><span class="si">%.2f</span><span class="s2"> and </span><span class="si">%.2f</span><span class="s2"> is </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">root</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The root of cos between 0.00 and 3.00 is 1.570796
+</pre></div>
+</div>
+</div>
+</div>
+<p>The Bisection method is a brute-force method guaranteed to find a root of a continuous function <span class="math notranslate nohighlight">\(f\)</span> on an interval <span class="math notranslate nohighlight">\((x_1,x_2)\)</span>, if <span class="math notranslate nohighlight">\((x_1,x_2)\)</span> contains a root for <span class="math notranslate nohighlight">\(f\)</span>. The Bisection method is not very efficient and it requires a search interval that contains only one root.</p>
+<p>An alternative is Newton’s method (also called the Newton-Raphson method). Consider the graph below. To find the root of the function represented by the blue line, Newton’s method starts at a user-defined starting location, <span class="math notranslate nohighlight">\(x_0\)</span> (the blue dot) and fits a straight line through the point <span class="math notranslate nohighlight">\((x,y)=(x_0,f(x_0))\)</span> in such a way that the line is tangent to <span class="math notranslate nohighlight">\(f(x)\)</span> at <span class="math notranslate nohighlight">\(x_0\)</span> (the red line). The intersection of the red line with the horizontal axis is the next estimate <span class="math notranslate nohighlight">\(x_1\)</span> of the root of the function (the red dot). This process is repeated until a value of <span class="math notranslate nohighlight">\(f(x)\)</span> is found that is sufficiently close to zero (within a specified tolerance), i.e., a straight line is fitted through the point <span class="math notranslate nohighlight">\((x,y)=(x_1,f(x_1))\)</span>, tangent to the function, and the the next estimate of the root of the function is taken as the intersection of this line with the horizontal axis, until the value of f at the root estimate is very close to 0.
+Unfortunately, not guaranteed that it always works, as is explained below.</p>
+<img src="http://i.imgur.com/tK1EOtD.png" alt="Newton's method on wikipedia">
+<p>The equation for a straight line with slope <span class="math notranslate nohighlight">\(a\)</span> through the point <span class="math notranslate nohighlight">\(x_n,f(x_n)\)</span> is:</p>
+<div class="math notranslate nohighlight">
+\[y = a(x-x_n) + f(x_n)\]</div>
+<p>For the line to be tangent to the function <span class="math notranslate nohighlight">\(f(x)\)</span> at the point <span class="math notranslate nohighlight">\(x=x_n\)</span>, the slope <span class="math notranslate nohighlight">\(a\)</span> has to equal the derivative of <span class="math notranslate nohighlight">\(f(x)\)</span> at <span class="math notranslate nohighlight">\(x_n\)</span>: <span class="math notranslate nohighlight">\(a=f'(x_n)\)</span>. The intersection of the line with the horizontal axis is the value of <span class="math notranslate nohighlight">\(x\)</span> that results in <span class="math notranslate nohighlight">\(y=0\)</span> and this is the next estimate <span class="math notranslate nohighlight">\(x_{n+1}\)</span> of the root of the function. In order to find this estimate we need to solve:</p>
+<div class="math notranslate nohighlight">
+\[0 = f'(x_n) (x_{n+1}-x_n) + f(x_n)\]</div>
+<p>which gives</p>
+<div class="math notranslate nohighlight">
+\[\boxed{x_{n+1} = x_n - f(x_n)/f'(x_n)}\]</div>
+<p>The search for the root is completed when <span class="math notranslate nohighlight">\(|f(x)|\)</span> is below a user-specified tolerance.</p>
+<p>An animated illustration of Newton’s method can be found on <img src="http://upload.wikimedia.org/wikipedia/commons/e/e0/NewtonIteration_Ani.gif" alt="Newton's method on wikipedia" width="400px"></p>
+<!-- [Wikipedia](http://upload.wikimedia.org/wikipedia/commons/e/e0/NewtonIteration_Ani.gif) --><p>Newton’s method is guaranteed to find the root of a function if the function is <em>well behaved</em> and the search starts <em>close enough</em> to the root. If those two conditions are met, Newton’s method is very fast, but if they are not met, the method is not guaranteed to converge to the root.</p>
+<p>Another disadvantage of Newton’s method is that we need to define the derivative of the function.</p>
+<p>Note that the function value does not necessarily go down at every iteration (as illustated in the animation above).</p>
+</div>
+<div class="section" id="newton-s-method-implementation">
+<h2>Newton’s Method Implementation<a class="headerlink" href="#newton-s-method-implementation" title="Permalink to this headline">¶</a></h2>
+<p>We implement Newton’s method as function <code class="docutils literal notranslate"><span class="pre">newtonsmethod</span></code> that takes in the following arguments:</p>
+<ol class="simple">
+<li><p>The function for which to find the root.</p></li>
+<li><p>The derivative of the function.</p></li>
+<li><p>The starting point of the search <span class="math notranslate nohighlight">\(x_0\)</span>.</p></li>
+<li><p>The tolerance <code class="docutils literal notranslate"><span class="pre">tol</span></code> used as a stopping criterion, by default <span class="math notranslate nohighlight">\(10^{-6}\)</span>.</p></li>
+<li><p>The maximum number of iterations <code class="docutils literal notranslate"><span class="pre">nmax</span></code>, by default 10.</p></li>
+</ol>
+<p><code class="docutils literal notranslate"><span class="pre">newtonsmethod</span></code> returns the value of <span class="math notranslate nohighlight">\(x\)</span> where <span class="math notranslate nohighlight">\(f(x)\)</span> is (approximately) zero or prints a message if the maximum number of iterations is reached before the tolerance is met.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">newtonsmethod</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">funcp</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span> <span class="n">nmax</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    
+    <span class="n">f</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+    <span class="n">fp</span> <span class="o">=</span> <span class="n">funcp</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nmax</span><span class="p">):</span>
+        <span class="c1">### START CODE HERE</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+        <span class="n">fp</span> <span class="o">=</span> <span class="n">funcp</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+        <span class="n">xs</span> <span class="o">-=</span> <span class="n">f</span><span class="o">/</span><span class="n">fp</span>
+        
+        <span class="c1">### END CODE HERE</span>
+        <span class="k">if</span> <span class="n">silent</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">func</span><span class="p">(</span><span class="n">xs</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="p">:</span> 
+            <span class="k">return</span> <span class="p">(</span><span class="n">xs</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">break</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="p">:</span>
+        <span class="c1">#print(&#39;Max number of iterations reached before convergence&#39;)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We test <code class="docutils literal notranslate"><span class="pre">newtonsmethod</span></code> by finding the root of <span class="math notranslate nohighlight">\(f(x)=\frac{1}{2}-\text{e}^{-x}\)</span> using <span class="math notranslate nohighlight">\(x_0=1\)</span> as the starting point of the search. How many iterations do we need if we start at <span class="math notranslate nohighlight">\(x=4\)</span>?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">fp</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)</span>
+
+<span class="n">xs</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">func</span> <span class="o">=</span> <span class="n">exponential_function</span>
+<span class="n">funcp</span> <span class="o">=</span> <span class="n">fp</span>
+<span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-6</span>
+<span class="n">nmax</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="n">xzero</span><span class="p">,</span> <span class="n">iterations</span> <span class="o">=</span> <span class="n">newtonsmethod</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">funcp</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">tol</span><span class="p">,</span> <span class="n">nmax</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;First Example&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">xzero</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting search from x = </span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">xs</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;root at x = </span><span class="si">%f</span><span class="s2">, exponential_function(root) = </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">xzero</span><span class="p">,</span> <span class="n">exponential_function</span><span class="p">(</span><span class="n">xzero</span><span class="p">)))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tolerance reached in </span><span class="si">%d</span><span class="s2"> iterations&quot;</span> <span class="o">%</span> <span class="n">iterations</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span> 
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting search from x = </span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">xs</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Max number of iterations reached before convergence&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+   
+<span class="n">xs</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">nmax</span> <span class="o">=</span> <span class="mi">50</span>
+
+<span class="n">xzero</span><span class="p">,</span> <span class="n">iterations</span> <span class="o">=</span> <span class="n">newtonsmethod</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">funcp</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">tol</span><span class="p">,</span> <span class="n">nmax</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Second Example&quot;</span><span class="p">)</span> 
+<span class="k">if</span> <span class="n">xzero</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>    
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting search from x = </span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">xs</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;root at x = </span><span class="si">%f</span><span class="s2">, exponential_function(root) = </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">xzero</span><span class="p">,</span> <span class="n">exponential_function</span><span class="p">(</span><span class="n">xzero</span><span class="p">)))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tolerance reached in </span><span class="si">%d</span><span class="s2"> iterations&quot;</span> <span class="o">%</span> <span class="n">iterations</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span> 
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting search from x = </span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">xs</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Max number of iterations reached before convergence&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>First Example
+Starting search from x = 1.00
+root at x = 0.693147, exponential_function(root) = -0.000000
+tolerance reached in 4 iterations
+
+Second Example
+Starting search from x = 4.00
+root at x = 0.693147, exponential_function(root) = 0.000000
+tolerance reached in 29 iterations
+</pre></div>
+</div>
+</div>
+</div>
 </div>
 </div>
 
