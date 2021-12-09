@@ -8,12 +8,32 @@
 # In[1]:
 
 
+get_ipython().run_line_magic('matplotlib', 'widget')
+import ipywidgets as widgets
+import matplotlib.pyplot as plt
+import numpy as np
+
+x = np.linspace(0,10, 100)
+
+def sine_func(x, w, amp):
+    return amp*np.sin(w*x)
+
+@widgets.interact(w=(0, 4, 0.01), amp=(0, 4, .1))
+def update(w = 1, amp = 1):
+    plt.clf()
+    plt.ylim(-4, 4)
+    plt.plot(x, sine_func(x, w, amp))
+
+
+# In[2]:
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 plt.ion()
 
 
-# In[2]:
+# In[3]:
 
 
 def f(x):
@@ -22,6 +42,7 @@ def f(x):
 x = np.linspace(-2, 2, 100)
 y = f(x)
 plt.axhline(0, ls='--', c='r')
+plt.clf()
 plt.plot(x, y)
 plt.show()
 
@@ -35,7 +56,7 @@ plt.show()
 # 4. If $f(x_m)f(x_2) < 0$, replace $x_1$ by $x_m$, otherwise, replace $x_2$ by $x_m$.
 # 5. If $|x_1 - x_2|<\varepsilon$, where $\varepsilon$ is a user-specified tolerance, return $\frac{1}{2}(x_1 + x_2)$, otherwise return to step 2.
 
-# In[3]:
+# In[4]:
 
 
 def exponential_function(x):
@@ -60,7 +81,7 @@ plt.axhline(0, color='r', ls='--')
 # Steps 2-5 of the algorithm explained above are implemented as a loop to be run until the tolerance level is met, at most `nmax` times. 
 # 
 
-# In[4]:
+# In[5]:
 
 
 def bisection(func, x1, x2, tol=1e-3, nmax=10, silent=True):
@@ -85,7 +106,7 @@ def bisection(func, x1, x2, tol=1e-3, nmax=10, silent=True):
     return x1
 
 
-# In[5]:
+# In[6]:
 
 
 x1 = 0 
@@ -98,7 +119,7 @@ print ("The value of the function at the 'root' is %f" % exponential_function(xz
 
 # and of $cos$  between 0 and 3.
 
-# In[6]:
+# In[7]:
 
 
 x1 = 0 
@@ -151,7 +172,7 @@ print ("The root of cos between %.2f and %.2f is %f" % (x1, x2, root))
 # `newtonsmethod` returns the value of $x$ where $f(x)$ is (approximately) zero or prints a message if the maximum number of iterations is reached before the tolerance is met. 
 # 
 
-# In[7]:
+# In[8]:
 
 
 def newtonsmethod(func, funcp, xs, tol=1e-6, nmax=10, silent=True):
@@ -176,7 +197,7 @@ def newtonsmethod(func, funcp, xs, tol=1e-6, nmax=10, silent=True):
 
 # We test `newtonsmethod` by finding the root of $f(x)=\frac{1}{2}-\text{e}^{-x}$ using $x_0=1$ as the starting point of the search. How many iterations do we need if we start at $x=4$?
 
-# In[8]:
+# In[9]:
 
 
 def fp(x):
