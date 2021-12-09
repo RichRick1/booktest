@@ -12,17 +12,33 @@ get_ipython().run_line_magic('matplotlib', 'widget')
 import ipywidgets as widgets
 import matplotlib.pyplot as plt
 import numpy as np
+import nbinteract as nbi
 
 x = np.linspace(0,10, 100)
 
 def sine_func(x, w, amp):
     return amp*np.sin(w*x)
 
-@widgets.interact(w=(0, 4, 0.01), amp=(0, 4, .1))
-def update(w = 1, amp = 1):
-    plt.clf()
-    plt.ylim(-4, 4)
-    plt.plot(x, sine_func(x, w, amp))
+# @widgets.interact(w=(0, 4, 0.01), amp=(0, 4, .1))
+# def update(w = 1, amp = 1):
+#     plt.clf()
+#     plt.ylim(-4, 4)
+#     plt.plot(x, sine_func(x, w, amp))
+def normal(mean, sd):
+    '''Returns 1000 points drawn at random fron N(mean, sd)'''
+    return np.random.normal(mean, sd, 10000)
+
+# Plot aesthetics
+options = {
+    'xlim': (-2, 12),
+    'ylim': (0, 0.7),
+    'bins': 100
+}
+
+# Pass in the `normal` function and let user change mean and sd.
+# Whenever the user interacts with the sliders, the `normal` function
+# is called and the returned data are plotted.
+nbi.hist(normal, mean=(0, 10), sd=(0, 2.0), options=options)
 
 
 # In[2]:
